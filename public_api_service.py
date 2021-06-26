@@ -49,7 +49,7 @@ class ListingsHandler(BaseHandler):
                 self.write_json({"result": False, "errors": "invalid user_id"}, status_code=400)
                 return
 
-        listings = utils.get_listings(user_id)
+        listings = yield utils.get_listings(user_id)
 
         self.write_json({"result": True, "listings": listings})
 
@@ -61,21 +61,19 @@ class ListingsHandler(BaseHandler):
         listing_type = body["listing_type"]
         price = body["price"]
         
-        listing = utils.create_listing(user_id, listing_type, price)
+        listing = yield utils.create_listing(user_id, listing_type, price)
 
         self.write_json({"result": True, "listing": listing})
 
 
 
 class UsersHandler(BaseHandler):
-
     @tornado.gen.coroutine
     def post(self):
         # Collecting required params
-        # name = self.get_argument("name")
         body = json.loads(self.request.body)
         name = body["name"]
-        user = utils.create_user(name=name)
+        user = yield utils.create_user(name=name)
         self.write_json({"result": True, "user": user})
 
 
